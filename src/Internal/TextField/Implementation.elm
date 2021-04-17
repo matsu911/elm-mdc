@@ -32,7 +32,7 @@ import Html exposing (Html, text)
 import Html.Attributes as Html
 import Internal.Component as Component exposing (Index, Indexed)
 import Internal.Msg
-import Internal.Options as Options exposing (cs, styled, when, viewJust)
+import Internal.Options as Options exposing (cs, styled, viewJust, when)
 import Internal.TextField.Model exposing (Geometry, Model, Msg(..), defaultGeometry, defaultModel)
 import Json.Decode as Decode exposing (Decoder)
 import Json.Encode as Encode
@@ -254,7 +254,8 @@ textField lift model options list =
         ({ config } as summary) =
             Options.collect defaultConfig options
 
-        domId = config.id_
+        domId =
+            config.id_
 
         isDirty =
             model.isDirty || Maybe.withDefault False (Maybe.map ((/=) "") config.value)
@@ -284,6 +285,7 @@ textField lift model options list =
             case config.type_ of
                 Just t ->
                     t == "color" || t == "date" || t == "datetime-local" || t == "month" || t == "range" || t == "time" || t == "week"
+
                 Nothing ->
                     False
 
@@ -293,7 +295,8 @@ textField lift model options list =
         canHaveLabel =
             not (config.fullWidth || config.outlined || config.textarea)
 
-        hasLabel = config.labelText /= Nothing
+        hasLabel =
+            config.labelText /= Nothing
 
         htmlLabel =
             styled Html.label
@@ -326,11 +329,7 @@ textField lift model options list =
                 )
                 [ cs "mdc-text-field__input"
                 , Options.id config.id_
-                , if config.outlined && not config.textarea then
-                    Options.on "focus" (Decode.map (lift << Focus) decodeGeometry)
-
-                  else
-                    Options.on "focus" (Decode.succeed (lift (Focus defaultGeometry)))
+                , Options.on "focus" (Decode.succeed (lift (Focus defaultGeometry)))
                 , Options.onBlur (lift Blur)
                 , Options.onInput (lift << Input)
                 , Options.many
@@ -405,7 +404,6 @@ textField lift model options list =
                 , element "affix--suffix"
                 ]
                 [ Html.text s ]
-
     in
     Options.apply summary
         Html.div
@@ -425,12 +423,14 @@ textField lift model options list =
         []
         (list
             ++ [ if isFilled then
-                     styled Html.span [ element "ripple" ] []
+                    styled Html.span [ element "ripple" ] []
+
                  else
-                     text ""
+                    text ""
                , leadingIcon_
                , if hasLabel && canHaveLabel then
                     htmlLabel
+
                  else
                     text ""
                , if not config.outlined && not config.textarea then
@@ -459,14 +459,16 @@ textField lift model options list =
                  else
                     text ""
                , if not config.textarea then
-                     viewJust config.prefix viewPrefix
+                    viewJust config.prefix viewPrefix
+
                  else
-                     text ""
+                    text ""
                , input
                , if not config.textarea then
-                     viewJust config.suffix viewSuffix
+                    viewJust config.suffix viewSuffix
+
                  else
-                     text ""
+                    text ""
                , trailingIcon_
                ]
         )
@@ -477,7 +479,7 @@ iconView lift icon iconClass handler =
     case icon of
         Just name_ ->
             styled Html.i
-                [ cs ( "material-icons mdc-text-field__icon mdc-text-field__icon--" ++ iconClass)
+                [ cs ("material-icons mdc-text-field__icon mdc-text-field__icon--" ++ iconClass)
                 , Options.tabindex 0 |> when (handler /= Nothing)
                 , Options.role "button" |> when (handler /= Nothing)
                 , handler
@@ -549,19 +551,24 @@ decodeGeometry =
                 (DOM.childNode 1 DOM.offsetWidth)
 
 
-{- Make it easier to work with BEM conventions
--}
+
+{- Make it easier to work with BEM conventions -}
+
+
 block : Property m
 block =
     cs blockName
 
+
 element : String -> Property m
 element module_ =
-    cs ( blockName ++ "__" ++ module_ )
+    cs (blockName ++ "__" ++ module_)
+
 
 modifier : String -> Property m
 modifier modifier_ =
-    cs ( blockName ++ "--" ++ modifier_ )
+    cs (blockName ++ "--" ++ modifier_)
+
 
 blockName : String
 blockName =
